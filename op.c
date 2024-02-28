@@ -139,27 +139,27 @@ static double op_e(struct stack *s)
 }
 
 struct operation operations[] = {
-	{"swap", 2, op_swap},
-	{"+",    2, op_add},
-	{"-",    2, op_subtract},
-	{"*",    2, op_multiply},
-	{"/",    2, op_divide},
-	{"//",   2, op_integer_divide},
-	{"%",    2, op_remainder},
-	{"^",    2, op_power},
-	{"root", 2, op_root},
-	{"sqrt", 1, op_sqrt},
-	{"cbrt", 1, op_cbrt},
-	{"sin",  1, op_sin},
-	{"cos",  1, op_cos},
-	{"tan",  1, op_tan},
-	{"asin", 1, op_asin},
-	{"acos", 1, op_acos},
-	{"atan", 1, op_atan},
-	{"exp",  1, op_exp},
-	{"log",  1, op_log},
-	{"pi",   0, op_pi},
-	{"e",    0, op_e},
+	{"swap", 2, op_swap, "swap the top two values on the stack"},
+	{"+",    2, op_add, "add"},
+	{"-",    2, op_subtract, "subtract the top value from the value below"},
+	{"*",    2, op_multiply, "multiply"},
+	{"/",    2, op_divide, "divide the value below by the top value"},
+	{"//",   2, op_integer_divide, "integer divide: divide, then floor"},
+	{"%",    2, op_remainder, "remainder: divide, returning the remainder"},
+	{"^",    2, op_power, "power: raise value below to the power of the top"},
+	{"root", 2, op_root, "root: take value below to the root of the top"},
+	{"sqrt", 1, op_sqrt, "square root"},
+	{"cbrt", 1, op_cbrt, "cube root"},
+	{"sin",  1, op_sin, "sine"},
+	{"cos",  1, op_cos, "cosine"},
+	{"tan",  1, op_tan, "tangent"},
+	{"asin", 1, op_asin, "inverse sine"},
+	{"acos", 1, op_acos, "inverse cos"},
+	{"atan", 1, op_atan, "inverse tangent"},
+	{"exp",  1, op_exp, "natural exponent"},
+	{"log",  1, op_log, "natural logarithm"},
+	{"pi",   0, op_pi, "pi"},
+	{"e",    0, op_e, "Euler's number"},
 };
 
 /* Compare operations based on symbol.
@@ -191,4 +191,24 @@ void operation_list_init(void)
 {
 	qsort(operations, ARRAY_LEN(operations),
 			sizeof(operations[0]), operation_cmp);
+}
+
+/* Print the operations list in a readable format for documentation.
+ * Every line will be prefixed by the prefix; use it to indent the output.
+ */
+void print_operations(const char *prefix) {
+	printf("%sAvailable operators:\n", prefix);
+	printf("%sSYMBOL\t# ARGUMENTS\tDESCRIPTION\n", prefix);
+
+	for (int i = 0; i < ARRAY_LEN(operations); ++i) {
+		const struct operation op = operations[i];
+		char *num_args_descriptions[] = {"constant", "unary", "binary"};
+		char *num_args_desc;
+		if (op.num_args < 0 || op.num_args > 2)
+			num_args_desc = "ARGUMENT NUMBER ERROR";
+		else
+			num_args_desc = num_args_descriptions[op.num_args];
+		printf("%s'%s':\t%d (%s)\t%s\n", prefix, op.symbol,
+				op.num_args, num_args_desc, op.description);
+	}
 }
