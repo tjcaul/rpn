@@ -15,7 +15,16 @@ static double op_swap(struct stack *s)
 	double b = stack_pop(s);
 	double a = stack_pop(s);
 	stack_push(s, b);
+	//a will be pushed automatically by eval_expression
 	return a;
+}
+
+static double op_dup(struct stack *s)
+{
+	double x = stack_pop(s);
+	stack_push(s, x);
+	//will be pushed again by eval_expression
+	return x;
 }
 
 static double op_add(struct stack *s)
@@ -140,6 +149,7 @@ static double op_e(struct stack *s)
 
 struct operation operations[] = {
 	{"swap", 2, op_swap, "swap the top two values on the stack"},
+	{"dup",  1, op_dup, "duplicate the top value on the stack"},
 	{"+",    2, op_add, "add"},
 	{"-",    2, op_subtract, "subtract the top value from the value below"},
 	{"*",    2, op_multiply, "multiply"},
