@@ -6,9 +6,14 @@
 #include "eval.h"
 #include "op.h"
 
-#define HELP_STR "Usage: %s [-h | --help] [expression] ...\n" \
-                 "\tIf no expression is supplied, run in interactive mode.\n" \
-		 "\tAn expression is a space-separated list of numbers and operators.\n"
+#define CMDLINE_HELP_STR "Usage: %s [-h | --help] [expression] ...\n" \
+                         "\tIf no expression is supplied, run in interactive mode.\n" \
+		         "\tType \"help\" or \"?\" in interactive mode for help.\n" \
+		         "\tAn expression is a space-separated list of numbers and operators.\n"
+#define INTERACTIVE_HELP_STR "Type an expression to evaluate and print it.\n" \
+                             "The result will be pushed to the stack.\n" \
+                             "Use \"print\" or \"p\" to view the stack.\n" \
+                             "Use \"pop\", \"del\", or \"d\" to remove the top item from the stack.\n"
 
 static void run_stdin()
 {
@@ -28,7 +33,14 @@ static void run_stdin()
 			free(line);
 			break;
 		} else if (!strcmp(line, "help") || !strcmp(line, "?")) {
+			fprintf(stderr, INTERACTIVE_HELP_STR);
 			print_operations("");
+		} else if (!strcmp(line, "del") || !strcmp(line, "pop")
+				|| !strcmp(line, "d")) {
+			if (stack_is_empty(&stack))
+				fprintf(stderr, "Nothing to remove.");
+			else
+				stack_pop(&stack);
 		} else if (linelen != 0) {
 			double result = eval_expression(line, &stack);
 			if (!isnan(result))
@@ -47,7 +59,7 @@ static void run_stdin()
 int main(int argc, char **argv)
 {
 	if (argc > 1 && (!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help"))) {
-		fprintf(stderr, HELP_STR, argv[0]);
+		fprintf(stderr, CMDLINE_HELP_STR, argv[0]);
 		print_operations("\t");
 		return 0;
 	}
