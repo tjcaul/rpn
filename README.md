@@ -36,10 +36,6 @@ $ rpn 'pi 2 ^' '1.1 log'
 
 Enter interactive mode (note `print` to show the state of the stack):
 ```
-$ rpn
->>> 1 1 +
-2
->>> ^C
 rpn $ ./rpn        
 >>> 1 1 +
 2
